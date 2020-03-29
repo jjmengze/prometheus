@@ -33,8 +33,7 @@ type samples []tsdbutil.Sample
 func (s samples) Get(i int) tsdbutil.Sample { return s[i] }
 func (s samples) Len() int                  { return len(s) }
 
-// Samples interface allows to use different slice types e.g
-// that implements tsdbutil.Sample e.g prombp.Sample.
+// Samples interface allows to work on arrays of types that are compatible with tsdbutil.Sample.
 type Samples interface {
 	Get(i int) tsdbutil.Sample
 	Len() int

@@ -1276,7 +1276,6 @@ func (db *DB) Snapshot(dir string, withHead bool) error {
 }
 
 // Querier returns a new querier over the data partition for the given time range.
-// A goroutine must not handle more than one open Querier.
 func (db *DB) Querier(_ context.Context, mint, maxt int64) (storage.Querier, error) {
 	var blocks []BlockReader
 
@@ -1313,8 +1312,7 @@ func (db *DB) Querier(_ context.Context, mint, maxt int64) (storage.Querier, err
 	return newQuerier(blockQueriers), nil
 }
 
-// Querier returns a new querier over the data partition for the given time range.
-// A goroutine must not handle more than one open Querier.
+// ChunkQuerier returns a new chunk querier over the data partition for the given time range.
 func (db *DB) ChunkQuerier(_ context.Context, mint, maxt int64) (storage.ChunkQuerier, error) {
 	var blocks []BlockReader
 

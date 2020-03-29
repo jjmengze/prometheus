@@ -597,6 +597,10 @@ func (h *genericSeriesSetHeap) Pop() interface{} {
 // ChainingSeriesMerge returns single series from many same series by chaining samples together.
 // In case of the timestamp overlap, the first overlapped sample is kept and the rest samples with the same timestamps
 // are dropped. We expect the same labels for each given series.
+//
+// This works the best with replicated series, where data from two series are exactly the same. This does not work well
+// with "almost" the same data, e.g. from 2 Prometheus HA replicas. This is fine, since from the Prometheus perspective
+// this never happens.
 func ChainingSeriesMerge(s ...Series) Series {
 	if len(s) == 0 {
 		return nil
@@ -730,10 +734,6 @@ type verticalChunkSeriesMerger struct {
 // In case of the chunk overlaps, it compacts overlapping chunks into one or more time-ordered chunks with merged data.
 // Samples from overlapped chunks are merged using *series* (not chunk) vertical merge func.
 // It expects the same labels for each given series.
-//
-// TODO(bwplotka): Currently we have only ChainingSeriesMerge as overlapSeriesMergeFunc. This works the best with
-// replicated series, where data from two series are exactly the same. This does not work well with "almost" the same
-// data e.g from 2 Prometheus HA replicas. Propose penalty based algorithm from Thanos as alternative.
 func NewCompactingChunkSeriesMerger(mergeFunc VerticalSeriesMergeFunc) VerticalChunkSeriesMergeFunc {
 	return func(s ...ChunkSeries) ChunkSeries {
 		if len(s) == 0 {
